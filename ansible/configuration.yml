@@ -1,7 +1,5 @@
 - hosts: all
-  
   tasks:
-  
    - name: Generate hosts file
      lineinfile: dest=/etc/hosts
                  regexp='.*{{ item }}$'

@@ -3,19 +3,17 @@ import time, os, sys, random, re
 import inspect
 from os import environ as env
 
-from  novaclient import client
+from novaclient import client
 import keystoneclient.v3.client as ksclient
 from keystoneauth1 import loading
 from keystoneauth1 import session
 
 
-flavor = "ssc" 
-private_net = "SNIC Network"
+flavor = "ssc.medium" 
+private_net = "UPPMAX 2024/1-4 Internal IPv4 Network"
 floating_ip_pool_name = None
 floating_ip = None
-image_name = "image-ID"
-
-identifier = random.randint(1000,9999)
+image_name = "Ubuntu 20.04 - 2023.12.07"
 
 loader = loading.get_plugin_loader('password')
 
@@ -43,23 +41,23 @@ else:
 
 #print("Path at terminal when executing this file")
 #print(os.getcwd() + "\n")
-cfg_file_path =  os.getcwd()+'/prod-cloud-cfg.txt'
+cfg_file_path =  os.getcwd()+'/cloud-cfg.txt'
 if os.path.isfile(cfg_file_path):
     userdata_prod = open(cfg_file_path)
 else:
-    sys.exit("prod-cloud-cfg.txt is not in current working directory")
+    sys.exit("cloud-cfg.txt is not in current working directory")
 
-cfg_file_path =  os.getcwd()+'/dev-cloud-cfg.txt'
+cfg_file_path =  os.getcwd()+'/cloud-cfg.txt'
 if os.path.isfile(cfg_file_path):
     userdata_dev = open(cfg_file_path)
 else:
-    sys.exit("dev-cloud-cfg.txt is not in current working directory")    
+    sys.exit("cloud-cfg.txt is not in current working directory")    
 
 secgroups = ['default']
 
 print ("Creating instances ... ")
-instance_prod = nova.servers.create(name="prod_server_with_docker_"+str(identifier), image=image, flavor=flavor, key_name='<KEY-NAME>',userdata=userdata_prod, nics=nics,security_groups=secgroups)
-instance_dev = nova.servers.create(name="dev_server_"+str(identifier), image=image, flavor=flavor, key_name='<KEY-NAME>',userdata=userdata_dev, nics=nics,security_groups=secgroups)
+instance_prod = nova.servers.create(name="prod_server_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata_prod, nics=nics,security_groups=secgroups)
+instance_dev = nova.servers.create(name="dev_server_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata_dev, nics=nics,security_groups=secgroups)
 inst_status_prod = instance_prod.status
 inst_status_dev = instance_dev.status
 
