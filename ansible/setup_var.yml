@@ -1,2 +1,2 @@
-prod_home: /technical-training/model-serving/ci_cd/production_server
-dev_home: /technical-training/model-serving/ci_cd/development_server
+prod_home: /model-serving/prod
+dev_home: /model-serving/dev

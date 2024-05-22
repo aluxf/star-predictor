@@ -13,7 +13,6 @@
    #  hostname: name="{{inventory_hostname}}"
    #  become: true
   
-
    - name: apt update
      apt: update_cache=yes upgrade=dist
      become: true
@@ -21,7 +20,7 @@
    - name: Download git repository
      become: true
      git:
-      repo: 'https://github.com/sztoor/model_serving.git'
+      repo: 'https://github.com/aluxf/star-predictor'
       dest: /model_serving 
       
    - name: Change ownership of a directory
@@ -34,11 +33,12 @@
       group: appuser
   
   # Install Docker
-  - name: Add Docker repository key
-    apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    state: present
-    become: true
+   - name: Add Docker repository key
+     apt_key:
+      url: 
+       https://download.docker.com/linux/ubuntu/gpg
+      state: present
+     become: true
 
    - name: Add Docker repository 
      command: add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
@@ -90,22 +90,31 @@
      apt: update_cache=yes upgrade=dist
      become: true
    
-   - name: Git hooks
-      become: true
-      shell: |
+   - name: Create incoming deployment git repo
+     shell: |
         mkdir incoming_deploy
         cd incoming_deploy
         git init --bare
-        cp /model_serving/prod/post-receive .git/hooks/post-receive
-        chmod +x .git/hooks/post-receive
-      args:
+     args:
         chdir: /home/appuser
+        creates: /home/appuser/incoming_deploy
+     become: true
+
+   - name: Git hooks
+     shell: |
+        cp /model_serving/prod/post-receive hooks/post-receive
+        chmod +x hooks/post-receive
+     args:
+        chdir: /home/appuser/incoming_deploy
+     become: true
 
    - name: Running containers
      become: true
      shell: docker compose up -d 
      args: 
       chdir: /model_serving/prod
+     # Temporary while prod has no application
+     ignore_errors: yes
 
 - hosts: devserver
   
@@ -117,24 +126,34 @@
       apt: update_cache=yes upgrade=dist
       become: true
 
-   - name: Git remote
-     become: true
-     shell: |
-      mkdir outgoing_deploy
-      git remote add prod appuser@{{hostvars[item].ansible_default_ipv4.address}}:/home/appuser/deploy
-     args:
-      chdir: /home/appuser
-    
-   - name: Git hooks
+    - name: Git remote
       become: true
+      shell: |
+        mkdir outgoing_deploy
+        cd outgoing_deploy
+        git init --bare
+        git remote add prod appuser@{{hostvars['prodserver']['ansible_host']}}:/home/appuser/incoming_deploy
+      args:
+       chdir: /home/appuser
+       creates: /home/appuser/outgoing_deploy
+    
+    - name: Create incoming deployment git repo
       shell: |
         mkdir incoming_deploy
         cd incoming_deploy
         git init --bare
-        cp /model_serving/dev/post-receive .git/hooks/post-receive
-        chmod +x .git/hooks/post-receive
       args:
         chdir: /home/appuser
+        creates: /home/appuser/incoming_deploy
+      become: true
+
+    - name: Git hooks
+      become: true
+      shell: |
+        cp /model_serving/dev/post-receive hooks/post-receive
+        chmod +x hooks/post-receive
+      args:
+        chdir: /home/appuser/incoming_deploy
   
     - name: Running containers
       become: true
