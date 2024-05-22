@@ -1,0 +1,19 @@
+#!/bin/bash
+while read oldrev newrev ref
+do
+ if [[ $ref =~ .*/master$ ]];
+ then
+ echo "Master ref received. Deploying master branch to production..."
+ sudo git --work-tree=/model_serving/dev --git-dir=/home/appuser/incoming_deploy checkout -f
+ cd /model_serving/dev
+ docker compose up -d
+ cp best_model.pt /home/appuser/outgoing_deploy/best_model.pt
+ cd /home/appuser/outgoing_deploy
+ git add .
+ git commit -m "New model deployed to production"
+ git push prod master
+ 
+ else
+ echo "Ref $ref successfully received. Doing nothing: only the master branch may be deployed on this server."
+ fi
+done

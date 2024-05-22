@@ -12,6 +12,7 @@
    #- name: Set hostname
    #  hostname: name="{{inventory_hostname}}"
    #  become: true
+  
 
    - name: apt update
      apt: update_cache=yes upgrade=dist
@@ -31,31 +32,13 @@
       recurse: yes
       owner: appuser
       group: appuser
-
-- hosts: prodserver
- 
-  vars_files:
-   - setup_var.yml  
   
-  tasks:  
-   - name: Extra packages
-     apt: pkg={{item}} state=latest update_cache=true 
-     with_items:
-      - apt-transport-https
-      - ca-certificates
-      - curl
-      - software-properties-common
-     become: true
-
-   - name: apt update
-     apt: update_cache=yes upgrade=dist
-     become: true
-
-   - name: Add Docker repository key
-     apt_key:
-      url: https://download.docker.com/linux/ubuntu/gpg
-      state: present
-     become: true
+  # Install Docker
+  - name: Add Docker repository key
+    apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+    become: true
 
    - name: Add Docker repository 
      command: add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
@@ -87,11 +70,42 @@
      apt: pkg=docker-ce state=present update_cache=true allow_unauthenticated=yes
      become: true
 
+
+- hosts: prodserver
+ 
+  vars_files:
+   - setup_var.yml  
+  
+  tasks:  
+   - name: Extra packages
+     apt: pkg={{item}} state=latest update_cache=true 
+     with_items:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+     become: true
+
+   - name: apt update
+     apt: update_cache=yes upgrade=dist
+     become: true
+   
+   - name: Git hooks
+      become: true
+      shell: |
+        mkdir incoming_deploy
+        cd incoming_deploy
+        git init --bare
+        cp /model_serving/prod/post-receive .git/hooks/post-receive
+        chmod +x .git/hooks/post-receive
+      args:
+        chdir: /home/appuser
+
    - name: Running containers
      become: true
      shell: docker compose up -d 
      args: 
-      chdir: /model_serving/ci_cd/production_server 
+      chdir: /model_serving/prod
 
 - hosts: devserver
   
@@ -99,11 +113,32 @@
    - setup_var.yml
 
   tasks:
-   - name: Extra packages
-     apt: pkg=python3-pip state=latest update_cache=true  
-     become: true
+    - name: apt update
+      apt: update_cache=yes upgrade=dist
+      become: true
 
-   - name: Install ML packages
+   - name: Git remote
      become: true
-     pip: 
-      name: scikit-learn, pandas, numpy
+     shell: |
+      mkdir outgoing_deploy
+      git remote add prod appuser@{{hostvars[item].ansible_default_ipv4.address}}:/home/appuser/deploy
+     args:
+      chdir: /home/appuser
+    
+   - name: Git hooks
+      become: true
+      shell: |
+        mkdir incoming_deploy
+        cd incoming_deploy
+        git init --bare
+        cp /model_serving/dev/post-receive .git/hooks/post-receive
+        chmod +x .git/hooks/post-receive
+      args:
+        chdir: /home/appuser
+  
+    - name: Running containers
+      become: true
+      shell: docker compose up -d 
+      args: 
+       chdir: /model_serving/dev
+    

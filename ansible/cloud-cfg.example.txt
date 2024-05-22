@@ -6,7 +6,7 @@ users:
    home: /home/appuser
    shell: /bin/bash
    ssh_authorized_keys:
-     - ssh-rsa
+     - 
 
 byobu_default: system
 

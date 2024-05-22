@@ -26,6 +26,6 @@
     - name: Add the public key to authorized_keys
       lineinfile:
         path: ~/.ssh/authorized_keys
-        line: "{{ hostvars['source_host']['ssh_pub_key'].stdout }}"
+        line: "{{ hostvars['devserver']['ssh_pub_key'].stdout }}"
         create: yes
         mode: '0600'
