@@ -98,7 +98,6 @@
      args:
         chdir: /home/appuser
         creates: /home/appuser/incoming_deploy
-     become: true
 
    - name: Git hooks
      shell: |
@@ -127,11 +126,10 @@
       become: true
 
     - name: Git remote
-      become: true
       shell: |
         mkdir outgoing_deploy
         cd outgoing_deploy
-        git init --bare
+        git init
         git remote add prod appuser@{{hostvars['prodserver']['ansible_host']}}:/home/appuser/incoming_deploy
       args:
        chdir: /home/appuser
@@ -145,7 +143,6 @@
       args:
         chdir: /home/appuser
         creates: /home/appuser/incoming_deploy
-      become: true
 
     - name: Git hooks
       become: true
