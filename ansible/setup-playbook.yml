@@ -120,10 +120,18 @@
   vars_files:
    - setup_var.yml
 
+  #TODO: Set Github username and email
   tasks:
     - name: apt update
       apt: update_cache=yes upgrade=dist
       become: true
+
+    - name: Git user and email
+      shell: |
+        git config --global user.name dev-server
+        git config --global user.email dev-server@example.com
+      args:
+        creates: ~/.gitconfig
 
     - name: Git remote
       shell: |
