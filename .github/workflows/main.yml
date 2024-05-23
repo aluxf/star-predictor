@@ -37,4 +37,4 @@ jobs:
 
       - name: Push to remote repository
         run: |
-          git push dev-server main
+          git push --force dev-server main
