@@ -8,8 +8,11 @@ do
  cd /model_serving/dev
  sudo docker compose up -d
  cp best_model.pt /home/appuser/outgoing_deploy/best_model.pt
- cd /home/appuser/outgoing_deploy
- git add .
+ 
+ cd /home/appuser/outgoing_deploy || { echo "Failed to change directory to /home/appuser/outgoing_deploy"; exit 1; }
+ pwd
+ echo "Adding changes to Git repository..."
+ git add . || { echo "Git add failed"; exit 1; }
  git commit -m "New model deployed to production"
  git push prod master
  

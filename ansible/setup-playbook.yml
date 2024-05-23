@@ -21,7 +21,9 @@
      become: true
      git:
       repo: 'https://github.com/aluxf/star-predictor'
-      dest: /model_serving 
+      dest: /model_serving
+      update: yes
+      force: yes
       
    - name: Change ownership of a directory
      become: true
@@ -107,6 +109,12 @@
         chdir: /home/appuser/incoming_deploy
      become: true
 
+   - name: Set owner of incoming/outgoing
+     become: true
+     shell: |
+        chown -R appuser:appuser /home/appuser/incoming_deploy
+  
+
    - name: Running containers
      become: true
      shell: docker compose up -d 
@@ -148,17 +156,23 @@
         mkdir incoming_deploy
         cd incoming_deploy
         git init --bare
+        cp /model_serving/dev/post-receive hooks/post-receive
       args:
         chdir: /home/appuser
         creates: /home/appuser/incoming_deploy
 
-    - name: Git hooks
+    - name: Allow execution of git hook
       become: true
       shell: |
-        cp /model_serving/dev/post-receive hooks/post-receive
         chmod +x hooks/post-receive
       args:
         chdir: /home/appuser/incoming_deploy
+    
+    - name: Set owner of incoming/outgoing
+      become: true
+      shell: |
+        chown -R appuser:appuser /home/appuser/incoming_deploy
+        chown -R appuser:appuser /home/appuser/outgoing_deploy
   
     - name: Running containers
       become: true
