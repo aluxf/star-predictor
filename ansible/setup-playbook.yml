@@ -23,6 +23,8 @@
       repo: 'git@github.com:aluxf/star-predictor.git'
       dest: /model_serving
       key_file: ~/.ssh/git_key
+      update: yes
+      force: yes
 
    - name: Change ownership of a directory
      become: true
