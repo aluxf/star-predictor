@@ -1,5 +1,5 @@
 # Use an official Ubuntu runtime as a parent image
-FROM python:3.9-slim-buster
+FROM python:3.9-slim
 
 # Set the working directory in the container to /app
 WORKDIR /app
@@ -19,4 +19,4 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 EXPOSE 80
 
 # Run start_instances.py when the container launches
-CMD ["python3 start_instances.py"]
+CMD ["python3", "start_instances.py"]
