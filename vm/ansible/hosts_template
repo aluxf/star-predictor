@@ -1,9 +1,16 @@
 [servers]
 prodserver ansible_host=<prod_ip>
 devserver ansible_host=<dev_ip>
+worker1 ansible_host=<worker1_ip>
+worker2 ansible_host=<worker2_ip>
+worker3 ansible_host=<worker3_ip>
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
 [prod]
 prodserver ansible_connection=ssh ansible_user=appuser
 [dev]
 devserver ansible_connection=ssh ansible_user=appuser
+[workers]
+worker1 ansible_connection=ssh ansible_user=appuser
+worker2 ansible_connection=ssh ansible_user=appuser
+worker3 ansible_connection=ssh ansible_user=appuser

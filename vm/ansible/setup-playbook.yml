@@ -141,6 +141,11 @@
     - name: apt update
       apt: update_cache=yes upgrade=dist
       become: true
+    
+    - name: Copy cluster-key to dev
+      copy:
+        src: ~/.ssh/cluster-key
+        dest: ~/.ssh/cluster-key
 
     - name: Git user and email
       shell: |
@@ -187,4 +192,4 @@
       shell: docker compose up -d 
       args: 
        chdir: /model_serving/dev
-    
+

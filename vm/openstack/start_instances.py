@@ -58,36 +58,43 @@ secgroups = ['default']
 print ("Creating instances ... ")
 instance_prod = nova.servers.create(name="prod_server_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata_prod, nics=nics,security_groups=secgroups)
 instance_dev = nova.servers.create(name="dev_server_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata_dev, nics=nics,security_groups=secgroups)
+instance_worker_1 = nova.servers.create(name="worker_1_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata_dev, nics=nics,security_groups=secgroups)
+instance_worker_2 = nova.servers.create(name="worker_2_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata_dev, nics=nics,security_groups=secgroups)
+instance_worker_3 = nova.servers.create(name="worker_3_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata_dev, nics=nics,security_groups=secgroups)
 inst_status_prod = instance_prod.status
 inst_status_dev = instance_dev.status
 
 print ("waiting for 10 seconds.. ")
 time.sleep(10)
 
-while inst_status_prod == 'BUILD' or inst_status_dev == 'BUILD':
-    print ("Instance: "+instance_prod.name+" is in "+inst_status_prod+" state, sleeping for 5 seconds more...")
-    print ("Instance: "+instance_dev.name+" is in "+inst_status_dev+" state, sleeping for 5 seconds more...")
+servers = [
+    instance_prod,
+    instance_dev,
+    instance_worker_1,
+    instance_worker_2,
+    instance_worker_3
+]
+
+status_list = ['BUILD']
+
+while 'BUILD' in status_list:
+    print ("Building servers...")
     time.sleep(5)
-    instance_prod = nova.servers.get(instance_prod.id)
-    inst_status_prod = instance_prod.status
-    instance_dev = nova.servers.get(instance_dev.id)
-    inst_status_dev = instance_dev.status
+    status_list = [nova.servers.get(server.id).status for server in servers]
 
 ip_address_prod = None
-for network in instance_prod.networks[private_net]:
-    if re.match('\d+\.\d+\.\d+\.\d+', network):
-        ip_address_prod = network
-        break
-if ip_address_prod is None:
-    raise RuntimeError('No IP address assigned!')
 
-ip_address_dev = None
-for network in instance_dev.networks[private_net]:
-    if re.match('\d+\.\d+\.\d+\.\d+', network):
-        ip_address_dev = network
-        break
-if ip_address_dev is None:
-    raise RuntimeError('No IP address assigned!')
+def get_ip_address(instance):
+    for network in instance.networks[private_net]:
+        if re.match('\d+\.\d+\.\d+\.\d+', network):
+            return network
+    return None
+
+ip_address_prod = get_ip_address(instance_prod)
+ip_address_dev = get_ip_address(instance_dev)
+ip_address_worker_1 = get_ip_address(instance_worker_1)
+ip_address_worker_2 = get_ip_address(instance_worker_2)
+ip_address_worker_3 = get_ip_address(instance_worker_3)
 
 print ("Instance: "+ instance_prod.name +" is in " + inst_status_prod + " state" + " ip address: "+ ip_address_prod)
 print ("Instance: "+ instance_dev.name +" is in " + inst_status_dev + " state" + " ip address: "+ ip_address_dev)
@@ -97,6 +104,9 @@ with open("ansible/hosts_template", "r") as f:
 
 hosts_content = hosts_content.replace("<prod_ip>", ip_address_prod)
 hosts_content = hosts_content.replace("<dev_ip>", ip_address_dev)
+hosts_content = hosts_content.replace("<worker1_ip>", ip_address_worker_1)
+hosts_content = hosts_content.replace("<worker2_ip>", ip_address_worker_2)
+hosts_content = hosts_content.replace("<worker3_ip>", ip_address_worker_3)
 
 with open("ansible/hosts", "w") as f:
     f.write(hosts_content)
