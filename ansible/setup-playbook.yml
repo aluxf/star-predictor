@@ -20,11 +20,10 @@
    - name: Download git repository
      become: true
      git:
-      repo: 'https://github.com/aluxf/star-predictor'
+      repo: 'git@github.com:aluxf/star-predictor.git'
       dest: /model_serving
-      update: yes
-      force: yes
-      
+      key_file: ~/.ssh/git_key
+
    - name: Change ownership of a directory
      become: true
      file:
