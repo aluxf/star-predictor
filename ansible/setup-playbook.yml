@@ -75,9 +75,6 @@
 
 
 - hosts: prodserver
- 
-  vars_files:
-   - setup_var.yml  
   
   tasks:  
    - name: Extra packages
@@ -125,11 +122,7 @@
      ignore_errors: yes
 
 - hosts: devserver
-  
-  vars_files:
-   - setup_var.yml
 
-  #TODO: Set Github username and email
   tasks:
     - name: apt update
       apt: update_cache=yes upgrade=dist

@@ -1,3 +1,4 @@
 cloud-cfg.txt
 opensrc.sh
 *.pt
+.env
