@@ -110,3 +110,14 @@ hosts_content = hosts_content.replace("<worker3_ip>", ip_address_worker_3)
 
 with open("ansible/hosts", "w") as f:
     f.write(hosts_content)
+
+with open("ansible/cluster-launcher.template.yml", "r") as f:
+    cluster_launcher_content = f.read()
+
+cluster_launcher_content = cluster_launcher_content.replace("<dev_ip>", ip_address_dev)
+cluster_launcher_content = cluster_launcher_content.replace("<worker1_ip>", ip_address_worker_1)
+cluster_launcher_content = cluster_launcher_content.replace("<worker2_ip>", ip_address_worker_2)
+cluster_launcher_content = cluster_launcher_content.replace("<worker3_ip>", ip_address_worker_3)
+
+with open("ansible/cluster-launcher.yml", "w") as f:
+    f.write(cluster_launcher_content)

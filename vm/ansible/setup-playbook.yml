@@ -144,8 +144,13 @@
     
     - name: Copy cluster-key to dev
       copy:
-        src: ~/.ssh/cluster-key
+        src: /.ssh/cluster-key
         dest: ~/.ssh/cluster-key
+    
+    - name: Copy cluster-launcher.yml to dev
+      copy:
+        src: cluster-launcher.yml
+        dest: /model_serving/dev/cluster-launcher.yml
 
     - name: Git user and email
       shell: |
