@@ -16,13 +16,27 @@
    - name: apt update
      apt: update_cache=yes upgrade=dist
      become: true
+    
+   - name: Copy git .ssh key from host to target
+     copy:
+       src: /.ssh/git-key
+       dest: ~/.ssh/git-key
+       mode: 0600
+     become: true
+  
+   - name: Add host to known hosts
+     known_hosts:
+       path: ~/.ssh/known_hosts
+       name: github.com
+       key: "{{ lookup('pipe', 'ssh-keyscan github.com') }}"
+     become: true
 
    - name: Download git repository
      become: true
      git:
       repo: 'git@github.com:aluxf/star-predictor.git'
       dest: /model_serving
-      key_file: ~/.ssh/git_key
+      key_file: ~/.ssh/git-key
       update: yes
       force: yes
 

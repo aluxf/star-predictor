@@ -1,0 +1,9 @@
+[servers]
+prodserver ansible_host=<prod_ip>
+devserver ansible_host=<dev_ip>
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+[prod]
+prodserver ansible_connection=ssh ansible_user=appuser
+[dev]
+devserver ansible_connection=ssh ansible_user=appuser

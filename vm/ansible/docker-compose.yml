@@ -5,11 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
     volumes:
       - .:/app
-      - ~/.ssh/cluster-key:/app/cluster-key
-    env_file:
-      - .env
+      - /home/ubuntu/.ssh:/.ssh:ro
     network_mode: host

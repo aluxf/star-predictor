@@ -91,3 +91,12 @@ if ip_address_dev is None:
 
 print ("Instance: "+ instance_prod.name +" is in " + inst_status_prod + " state" + " ip address: "+ ip_address_prod)
 print ("Instance: "+ instance_dev.name +" is in " + inst_status_dev + " state" + " ip address: "+ ip_address_dev)
+
+with open("ansible/hosts_template", "r") as f:
+    hosts_content = f.read()
+
+hosts_content = hosts_content.replace("<prod_ip>", ip_address_prod)
+hosts_content = hosts_content.replace("<dev_ip>", ip_address_dev)
+
+with open("ansible/hosts", "w") as f:
+    f.write(hosts_content)
