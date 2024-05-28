@@ -41,26 +41,22 @@ else:
 
 #print("Path at terminal when executing this file")
 #print(os.getcwd() + "\n")
+userdata=""
 cfg_file_path =  os.getcwd()+'/cloud-cfg.txt'
 if os.path.isfile(cfg_file_path):
-    userdata_prod = open(cfg_file_path)
+    with open(cfg_file_path, "r") as f:
+        userdata = f.read()
 else:
     sys.exit("cloud-cfg.txt is not in current working directory")
-
-cfg_file_path =  os.getcwd()+'/cloud-cfg.txt'
-if os.path.isfile(cfg_file_path):
-    userdata_dev = open(cfg_file_path)
-else:
-    sys.exit("cloud-cfg.txt is not in current working directory")    
 
 secgroups = ['default']
 
 print ("Creating instances ... ")
-instance_prod = nova.servers.create(name="prod_server_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata_prod, nics=nics,security_groups=secgroups)
-instance_dev = nova.servers.create(name="dev_server_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata_dev, nics=nics,security_groups=secgroups)
-instance_worker_1 = nova.servers.create(name="worker_1_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata_dev, nics=nics,security_groups=secgroups)
-instance_worker_2 = nova.servers.create(name="worker_2_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata_dev, nics=nics,security_groups=secgroups)
-instance_worker_3 = nova.servers.create(name="worker_3_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata_dev, nics=nics,security_groups=secgroups)
+instance_prod = nova.servers.create(name="prod_server_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
+instance_dev = nova.servers.create(name="dev_server_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
+instance_worker_1 = nova.servers.create(name="worker_1_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
+instance_worker_2 = nova.servers.create(name="worker_2_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
+instance_worker_3 = nova.servers.create(name="worker_3_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
 
 print ("waiting for 10 seconds.. ")
 time.sleep(10)
