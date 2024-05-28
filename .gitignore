@@ -3,3 +3,4 @@ opensrc.sh
 *.pt
 .env
 hosts
+cluster-launcher.yml
