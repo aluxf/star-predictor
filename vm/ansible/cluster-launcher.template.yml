@@ -1,12 +1,12 @@
 # This will be launched from devserver
 auth:
-  ssh_user: ubuntu
+  ssh_user: appuser
   ssh_private_key: ~/.ssh/cluster-key
 cluster_name: default
 cluster_synced_files: []
 docker:
   container_name: ray_container
-  image: rayproject/ray-ml:latest-cpu
+  image: rayproject/ray:latest
   pull_before_run: true
   run_options:
   - --ulimit nofile=65536:65536

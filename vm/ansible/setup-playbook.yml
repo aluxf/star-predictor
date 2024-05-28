@@ -43,7 +43,7 @@
    - name: Change ownership of a directory
      become: true
      file:
-      path: /technical-training
+      path: /model_serving
       state: directory
       recurse: yes
       owner: appuser
@@ -85,6 +85,10 @@
 
    - name: Install Docker  
      apt: pkg=docker-ce state=present update_cache=true allow_unauthenticated=yes
+     become: true
+     
+   - name: Add user to docker group
+     command: usermod -aG docker appuser
      become: true
 
 
@@ -197,4 +201,18 @@
       shell: docker compose up -d 
       args: 
        chdir: /model_serving/dev
+    
+    ##TODO: Start training on ray cluster
 
+- hosts: workers
+
+  tasks:
+    - name: Set environment variable
+      ansible.builtin.set_fact:
+        RAY_HOST: "{{ hostvars['prodserver']['ansible_host'] }}"
+      delegate_to: localhost
+    
+    - name: Connect to ray cluster
+      command: docker compose up -d
+      args:
+        chdir: /model_serving/worker

@@ -17,4 +17,4 @@ EXPOSE 8000
 
 # Specify the command to run on container start
 # Change 'app.py' to the entry point of your application
-CMD ["python", "train.py"]
+CMD ["ray", "start", "--head", "--port=6379"]
