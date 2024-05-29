@@ -9,7 +9,8 @@ from keystoneauth1 import loading
 from keystoneauth1 import session
 
 
-flavor = "ssc.medium" 
+prod_flavor = "ssc.medium"
+dev_flavor = "ssc.xlarge"
 private_net = "UPPMAX 2024/1-4 Internal IPv4 Network"
 floating_ip_pool_name = None
 floating_ip = None
@@ -31,7 +32,8 @@ print ("user authorization completed.")
 
 image = nova.glance.find_image(image_name)
 
-flavor = nova.flavors.find(name=flavor)
+prod_flavor = nova.flavors.find(name=prod_flavor)
+dev_flavor = nova.flavors.find(name=dev_flavor)
 
 if private_net != None:
     net = nova.neutron.find_network(private_net)
@@ -53,10 +55,10 @@ secgroups = ['default']
 
 print ("Creating instances ... ")
 instance_prod = nova.servers.create(name="prod_server_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
-instance_dev = nova.servers.create(name="dev_server_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
-instance_worker_1 = nova.servers.create(name="worker_1_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
-instance_worker_2 = nova.servers.create(name="worker_2_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
-instance_worker_3 = nova.servers.create(name="worker_3_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
+instance_dev = nova.servers.create(name="dev_server_1337", image=image, flavor=dev_flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
+instance_worker_1 = nova.servers.create(name="worker_1_1337", image=image, flavor=dev_flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
+instance_worker_2 = nova.servers.create(name="worker_2_1337", image=image, flavor=dev_flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
+instance_worker_3 = nova.servers.create(name="worker_3_1337", image=image, flavor=dev_flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
 
 print ("waiting for 10 seconds.. ")
 time.sleep(10)

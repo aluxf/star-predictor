@@ -1,0 +1,14 @@
+- hosts: devserver
+
+  tasks:
+    - name: Change train.sh perm
+      command: chmod +x train.sh
+      become: true
+      args:
+        chdir: /model_serving/dev/
+
+    - name: Start training
+      command: ./train.sh
+      become: true
+      args:
+        chdir: /model_serving/dev/

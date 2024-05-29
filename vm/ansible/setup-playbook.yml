@@ -16,6 +16,8 @@
    - name: apt update
      apt: update_cache=yes upgrade=dist
      become: true
+     # Temporary
+     ignore_errors: yes
     
    - name: Copy git .ssh key from host to target
      copy:
@@ -64,6 +66,8 @@
    - name: apt update
      apt: update_cache=yes upgrade=dist
      become: true
+     # Temporary
+     ignore_errors: yes
   
    # Workaround pip issue with MTU mismatch, see: https://github.com/docker/docker.github.io/pull/9249/files
    # MTU for SNIC is 1450, Docker default is 1500. Override so that Docker matches the host.

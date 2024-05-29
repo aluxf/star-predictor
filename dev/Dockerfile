@@ -12,6 +12,8 @@ RUN pip install -r requirements.txt
 # Copy the application code to the working directory
 COPY . /app/
 
+ENV TUNE_MAX_PENDING_TRIALS_PG=1
+
 # Specify the command to run on container start
 # Change 'app.py' to the entry point of your application
 CMD ["ray", "start", "--head", "--block", "--port=6379"]
