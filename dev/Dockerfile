@@ -1,5 +1,5 @@
 # Use the official Python base image from the Docker Hub
-FROM python:3.9-slim
+FROM rayproject/ray:latest
 
 # Set the working directory in the container
 WORKDIR /app
@@ -12,9 +12,6 @@ RUN pip install -r requirements.txt
 # Copy the application code to the working directory
 COPY . /app/
 
-# Expose the port the application runs on
-EXPOSE 8000
-
 # Specify the command to run on container start
 # Change 'app.py' to the entry point of your application
-CMD ["ray", "start", "--head", "--port=6379"]
+CMD ["ray", "start", "--head", "--block", "--port=6379"]

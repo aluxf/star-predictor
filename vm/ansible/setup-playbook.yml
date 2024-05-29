@@ -133,7 +133,7 @@
 
    - name: Running containers
      become: true
-     shell: docker compose up -d 
+     shell: docker compose up -d --build
      args: 
       chdir: /model_serving/prod
      # Temporary while prod has no application
@@ -150,11 +150,6 @@
       copy:
         src: /.ssh/cluster-key
         dest: ~/.ssh/cluster-key
-    
-    - name: Copy cluster-launcher.yml to dev
-      copy:
-        src: cluster-launcher.yml
-        dest: /model_serving/dev/cluster-launcher.yml
 
     - name: Git user and email
       shell: |
@@ -195,24 +190,50 @@
       shell: |
         chown -R appuser:appuser /home/appuser/incoming_deploy
         chown -R appuser:appuser /home/appuser/outgoing_deploy
+    
+    - name: Destroy containers
+      become: true
+      command: docker compose down
+      args:
+        chdir: /model_serving/dev
   
     - name: Running containers
       become: true
-      shell: docker compose up -d 
+      shell: docker compose up -d --build
       args: 
        chdir: /model_serving/dev
     
     ##TODO: Start training on ray cluster
 
 - hosts: workers
-
+  vars:
+    worker_env:
+      - key: RAY_HOST
+        value: "{{hostvars['devserver']['ansible_host']}}"
   tasks:
-    - name: Set environment variable
-      ansible.builtin.set_fact:
-        RAY_HOST: "{{ hostvars['prodserver']['ansible_host'] }}"
-      delegate_to: localhost
+    - name: populate /etc/environment
+      lineinfile:
+        path: "/etc/environment"
+        state: present
+        regexp: "^{{ item.key }}="
+        line: "{{ item.key }}={{ item.value}}"
+      with_items: "{{ worker_env }}"
+      become: true
+    
+    # Temporary
+    - name: Copy requirements.txt from dev to worker
+      command: cp ../dev/requirements.txt ./requirements.txt
+      args:
+        chdir: /model_serving/worker
+
+    - name: Destroy containers
+      become: true
+      command: docker compose down
+      args:
+        chdir: /model_serving/dev
     
     - name: Connect to ray cluster
-      command: docker compose up -d
+      become: true
+      command: docker compose up -d --build
       args:
         chdir: /model_serving/worker

@@ -6,5 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ../dev:/app
+      - .:/app
+    environment:
+      - RAY_HOST=${RAY_HOST}
     network_mode: host

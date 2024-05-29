@@ -4,8 +4,8 @@ FROM rayproject/ray:latest
 WORKDIR /app
 
 # Install Python dependencies
-COPY requirements.txt /app/
+COPY . /app
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-CMD ["ray start --address=$RAY_HOST:6379"]
+CMD ray start --address=$RAY_HOST:6379 --block

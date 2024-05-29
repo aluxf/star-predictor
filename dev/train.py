@@ -8,6 +8,7 @@ from sklearn.ensemble import RandomForestRegressor,GradientBoostingRegressor
 from sklearn.model_selection import train_test_split
 from dataset import create_dataset
 import joblib
+from ray import tune
 import ray
 
 def train(df):
@@ -33,17 +34,17 @@ def train(df):
         model = config['model']
         X_train, y_train = data['X_train'], data['y_train']
         cv_score = cross_val_score(model, X_train, y_train, cv=5, scoring='r2').mean()
-        ray.tune.report(score=cv_score)
+        return { "score" : cv_score}
 
     search_space = {
-        "model": ray.tune.grid_search(models),
+        "model": tune.grid_search(models),
     }
 
     dataset = {
         "X_train": X_train,
         "y_train": y_train,
     }
-    tuner = ray.tune.Tuner(ray.tune.with_parameters(train_model, data=dataset), param_space=search_space)
+    tuner = tune.Tuner(tune.with_parameters(train_model, data=dataset), param_space=search_space)
     result = tuner.fit()
     best_model = result.get_best_result(metric="score", mode="max").config["model"]
 
