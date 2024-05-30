@@ -9,6 +9,5 @@
 
     - name: Start training
       command: ./train.sh
-      become: true
       args:
         chdir: /model_serving/dev/

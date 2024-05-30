@@ -1,5 +1,8 @@
 #!/bin/bash
-cp best_model.pkl /home/appuser/outgoing_deploy/best_model.pkl
+sudo chown -R appuser:appuser /model_serving/dev/best_model.pkl
+# Issues with permissions
+sudo cp best_model.pkl /home/appuser/outgoing_deploy/best_model.pkl
+sudo chown -R appuser:appuser /home/appuser/outgoing_deploy/.git
 cd /home/appuser/outgoing_deploy
 echo "Adding changes to Git repository..."
 git add . || { echo "Git add failed"; exit 1; }

@@ -153,7 +153,7 @@
     - name: Copy cluster-key to dev
       copy:
         src: /.ssh/cluster-key
-        dest: ~/.ssh/cluster-key
+        dest: ~/.ssh/id_rsa
 
     - name: Git user and email
       shell: |
