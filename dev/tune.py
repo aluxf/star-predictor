@@ -13,15 +13,15 @@ import ray
 import json
 
 rf_search = {
-    'n_estimators': tune.randint(100, 500),
-    'max_depth': tune.randint(10, 50),
-    'min_samples_split': tune.randint(2, 10),
-    'min_samples_leaf': tune.randint(1, 10),
+    'n_estimators': tune.randint(100, 300),
+    'max_depth': tune.randint(10, 30),
+    'min_samples_split': tune.randint(2, 5),
+    'min_samples_leaf': tune.randint(1, 5),
     'random_state': 42
 }
 
 
-num_samples = 1000
+num_samples = 50
 
 def train(df):
     y = df['stars']

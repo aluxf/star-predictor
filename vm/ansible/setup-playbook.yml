@@ -234,7 +234,7 @@
       become: true
       command: docker compose down
       args:
-        chdir: /model_serving/dev
+        chdir: /model_serving/worker
     
     - name: Connect to ray cluster
       become: true
