@@ -66,8 +66,10 @@ def get_predictions(repo_link):
     X = df.drop(columns=['stars'])
 
     X = s.fit_transform(X)
-
-    model = load_model()
+    try:
+        model = load_model()
+    except:
+        return None,None
     results = model.predict(X)
     print(results)
     return results[0], y[0]

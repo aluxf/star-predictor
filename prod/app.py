@@ -22,7 +22,7 @@ def predict_star_count():
     if request.method == 'POST':
         repo_link = request.form['repo_link']
         predicted, real = get_predictions.delay(repo_link)
-
+    
     return render_template('result.html', predicted=predicted, real=real)
 
 if __name__ == '__main__':
