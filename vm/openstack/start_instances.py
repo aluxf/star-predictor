@@ -54,7 +54,7 @@ else:
 secgroups = ['default']
 
 print ("Creating instances ... ")
-instance_prod = nova.servers.create(name="prod_server_1337", image=image, flavor=flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
+instance_prod = nova.servers.create(name="prod_server_1337", image=image, flavor=prod_flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
 instance_dev = nova.servers.create(name="dev_server_1337", image=image, flavor=dev_flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
 instance_worker_1 = nova.servers.create(name="worker_1_1337", image=image, flavor=dev_flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
 instance_worker_2 = nova.servers.create(name="worker_2_1337", image=image, flavor=dev_flavor, key_name='alex',userdata=userdata, nics=nics,security_groups=secgroups)
@@ -106,14 +106,3 @@ hosts_content = hosts_content.replace("<worker3_ip>", ip_address_worker_3)
 
 with open("/ansible/hosts", "w") as f:
     f.write(hosts_content)
-
-with open("/ansible/cluster-launcher.template.yml", "r") as f:
-    cluster_launcher_content = f.read()
-
-cluster_launcher_content = cluster_launcher_content.replace("<dev_ip>", ip_address_dev)
-cluster_launcher_content = cluster_launcher_content.replace("<worker1_ip>", ip_address_worker_1)
-cluster_launcher_content = cluster_launcher_content.replace("<worker2_ip>", ip_address_worker_2)
-cluster_launcher_content = cluster_launcher_content.replace("<worker3_ip>", ip_address_worker_3)
-
-with open("/ansible/cluster-launcher.yml", "w") as f:
-    f.write(cluster_launcher_content)

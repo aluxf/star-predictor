@@ -9,7 +9,7 @@ do
  sudo git --work-tree=/model_serving --git-dir=/home/appuser/incoming_deploy checkout -f main
   
  cd /model_serving/dev
- sudo docker compose up -d
+ ./train.sh
  
  else
  echo "Ref $ref successfully received. Doing nothing: only the master branch may be deployed on this server."
