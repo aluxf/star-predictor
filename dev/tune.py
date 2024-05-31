@@ -67,15 +67,14 @@ def train(df):
                 mode="max"
             ))
     result = tuner.fit()
-    best_res = result.get_best_result(metric="score", mode="max")
-    best_config = best_res.config["hyperparams"]
+    best_config = result.get_best_result(metric="score", mode="max").config["hyperparams"]
 
     best_model.set_params(**best_config)
     best_model.fit(X_train, y_train)
     test_score = best_model.score(X_test, y_test)
     print(f"Best model: {best_model.__class__,__name__}")
     print(f"Test R^2 Score: {test_score}")
-    print(best_res)
+    print(best_config)
 
     # Shutdown Ray
     ray.shutdown()
