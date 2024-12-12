@@ -1,6 +1,6 @@
 cloud-cfg.txt
 opensrc.sh
 *.pt
-.env
+**/*.env
 hosts
 cluster-launcher.yml
